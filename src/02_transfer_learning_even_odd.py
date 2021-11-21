@@ -6,6 +6,7 @@ from src.utils.common import read_yaml, create_directories
 import tensorflow as tf
 import numpy as np
 import io
+import time
 
 
 STAGE = "transfer learning" ## <<< change stage name 
@@ -79,12 +80,16 @@ def main(config_path):
 
 
     ## Train the model
+    start_time = time.time()
     history = new_model.fit(
         X_train, y_train_bin,  # << y_train_bin for our  odd even  use case
         epochs=10, 
         validation_data = (X_valid, y_valid_bin), # << y_train_bin for our  odd even  use case
         verbose=2
         )
+    end_time = time.time()-start_time
+    end_time = round(end_time, 2)
+    logging.info(f"Training the odd even transfer model took: {end_time} secs")
 
     ## Save the base model
     model_dir_path = os.path.join("artifacts","models")

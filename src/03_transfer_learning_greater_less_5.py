@@ -90,7 +90,8 @@ def main(config_path):
         )
     end_time = time.time()-start_time
     end_time = round(end_time, 2)
-    logging.info(f"Training the greater and less than  5 model took: {end_time} secs")
+    logging.info(f"Training the greater and less than 5 model took: {end_time} secs")
+    logging.info(f"Starting Accuracy of the greater and less than 5 model: {round(history.history['accuracy'][0], 4)} and Starting Validation Accracy: {round(history.history['val_accuracy'][0], 4)}")
 
     ## Save the base model
     model_dir_path = os.path.join("artifacts","models")

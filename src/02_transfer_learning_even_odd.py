@@ -90,6 +90,9 @@ def main(config_path):
     end_time = time.time()-start_time
     end_time = round(end_time, 2)
     logging.info(f"Training the odd even transfer model took: {end_time} secs")
+    # print(history.history.keys())
+    # print(history.history['accuracy'][0])
+    logging.info(f"Starting Accuracy of the odd even transfer model: {round(history.history['accuracy'][0], 4)} and Starting Validation Accracy: {round(history.history['val_accuracy'][0], 4)}")
 
     ## Save the base model
     model_dir_path = os.path.join("artifacts","models")

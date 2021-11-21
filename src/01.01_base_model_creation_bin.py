@@ -81,6 +81,8 @@ def main(config_path):
     end_time = time.time()-start_time
     end_time = round(end_time, 2)
     logging.info(f"Training the odd even model from scratch took: {end_time} secs")
+    logging.info(f"Starting Accuracy of the odd even model from scratch model: {round(history.history['accuracy'][0], 4)} and Starting Validation Accracy: {round(history.history['val_accuracy'][0], 4)}")
+
 
     ## save the base model - 
     model_dir_path = os.path.join("artifacts","models")

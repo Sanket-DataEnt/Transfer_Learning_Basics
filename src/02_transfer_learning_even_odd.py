@@ -57,38 +57,42 @@ def main(config_path):
     logging.info(f"loaded base model summary: \n{_log_model_summary(base_model)}")
 
     ## freeze the weights
+    for layer in base_model.layers[: -1]:
+        print(f"trainable status of before: {layer.name}:{layer.trainable}")
+        layer.trainable = False
+        print(f"trainable status of after: {layer.name}:{layer.trainable}")
 
-
-    ## define the model and compile it
-    model = tf.keras.models.Sequential(LAYERS)
+    base_layer = base_model.layers[: -1]
+    # ## define the model and compile it
+    new_model = tf.keras.models.Sequential(base_layer)
+    new_model.add(
+        tf.keras.layers.Dense(2, activation="softmax", name = "output_layer")
+    )
+    logging.info(f"{STAGE} model summary: \n{_log_model_summary(new_model)}")
 
 
     LOSS = "sparse_categorical_crossentropy"
     OPTIMIZER = tf.keras.optimizers.SGD(learning_rate=1e-3)
     METRICS = ["accuracy"]
 
-    model.compile(loss=LOSS, optimizer=OPTIMIZER, metrics=METRICS) 
-
-
+    new_model.compile(loss=LOSS, optimizer=OPTIMIZER, metrics=METRICS) 
 
 
     ## Train the model
-    history = model.fit(
-        X_train, y_train, 
+    history = new_model.fit(
+        X_train, y_train_bin,  # << y_train_bin for our  odd even  use case
         epochs=10, 
-        validation_data = (X_valid, y_valid),
+        validation_data = (X_valid, y_valid_bin), # << y_train_bin for our  odd even  use case
         verbose=2
         )
 
     ## Save the base model
     model_dir_path = os.path.join("artifacts","models")
-    create_directories([model_dir_path])
-
-    model_file_path = os.path.join(model_dir_path,"base_model.h5")
-    model.save(model_file_path)
+    model_file_path = os.path.join(model_dir_path,"even_odd_model.h5")
+    new_model.save(model_file_path)
 
     logging.info(f"base model is saved  at {model_file_path}")
-    logging.info(f"evaluation metrics {model.evaluate(X_test, y_test)}")
+    logging.info(f"evaluation metrics {new_model.evaluate(X_test, y_test_bin)}")
 
 
 if __name__ == '__main__':

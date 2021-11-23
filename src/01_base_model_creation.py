@@ -31,7 +31,6 @@ def main(config_path):
     y_valid, y_train = y_train_full[:5000], y_train_full[5000:]
 
     ## set the seeds
-
     seed = 2021 ##get it from config
     tf.random.set_seed(seed)
     np.random.seed(seed)
@@ -43,6 +42,7 @@ def main(config_path):
           tf.keras.layers.LeakyReLU(),
           tf.keras.layers.Dense(100, name="hiddenlayer2"),
           tf.keras.layers.LeakyReLU(),
+        #   tf.keras.layers.Dense(1, activation="sigmoid", name="outputlayer")
           tf.keras.layers.Dense(10, activation="softmax", name="outputlayer")
     ]
 
@@ -50,7 +50,8 @@ def main(config_path):
     model = tf.keras.models.Sequential(LAYERS)
 
 
-    LOSS = "sparse_categorical_crossentropy"
+    LOSS = "sparse_categorical_crossentropy" # << use in case of softmax
+    # LOSS = "binary_crossentropy" # << use in case of sigmoid
     OPTIMIZER = tf.keras.optimizers.SGD(learning_rate=1e-3)
     METRICS = ["accuracy"]
 
@@ -79,6 +80,9 @@ def main(config_path):
     end_time = time.time()-start_time
     end_time = round(end_time, 2)
     logging.info(f"Training the base model took: {end_time} secs")
+    # print(history.history.keys())
+    logging.info(f"Starting Accuracy of the odd even from scratch model: {round(history.history['accuracy'][0], 4)} and Starting Validation Accracy: {round(history.history['val_accuracy'][0], 4)}")
+
 
     ## Save the base model
     model_dir_path = os.path.join("artifacts","models")
